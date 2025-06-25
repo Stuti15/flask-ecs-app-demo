@@ -7,28 +7,25 @@ phases:
       - aws --version
       - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 160596073886.dkr.ecr.ap-south-1.amazonaws.com
       - echo "Setting image tag from Git commit ID..."
-      - IMAGE_TAG=$(echo ${CODEBUILD_RESOLVED_SOURCE_VERSION} | cut -c 1-8)
+      - IMAGE_TAG=$(echo ${CODEBUILD_RESOLVED_SOURCE_VERSION} | head -c 8)
       
 
   build:
     commands:
-      - echo "Build started on $(date)"
-      - echo "Building Docker image..."
+      - echo Build started on `date`
+      - echo Building Docker image...
       - docker build -t flask-ecs-app:$IMAGE_TAG .
-      - echo "Tagging Docker image with full ECR repo URI..."
       - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
-      - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:latest
 
   post_build:
     commands:
-      - echo "Post-build started on $(date)"
-      - echo "Pushing Docker image to ECR..."
+      - echo Post-build started on `date`
+      - echo Pushing Docker image to ECR...
       - docker push 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
+      - docker tag 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:latest
       - docker push 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:latest
       - echo "Creating imagedefinitions.json for ECS deployment..."
       - printf '[{"name":"flask-ecs-app","imageUri":"160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:%s"}]' $IMAGE_TAG > imagedefinitions.json
-      - echo "imagedefinitions.json content:"
-      - cat imagedefinitions.json
 
 artifacts:
   files:
