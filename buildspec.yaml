@@ -9,7 +9,7 @@ phases:
       - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 160596073886.dkr.ecr.ap-south-1.amazonaws.com
       - echo "Setting image tag..."
       - IMAGE_TAG=$(echo ${CODEBUILD_RESOLVED_SOURCE_VERSION:-latest} | cut -c 1-8)
-      
+      - echo "Using image tag: $IMAGE_TAG"
 
   build:
     commands:
