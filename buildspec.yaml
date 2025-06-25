@@ -17,14 +17,19 @@ phases:
       - docker build -t flask-ecs-app:$IMAGE_TAG .
       - echo "Tagging image with full ECR repo name..."
       - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
+      - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:latest
+      - echo "Docker images list:"
+      - docker images
 
   post_build:
     commands:
       - echo "Build completed on $(date)"
       - echo "Pushing Docker images to ECR..."
       - docker push 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
+      - docker push 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:latest
       - echo "Creating imagedefinitions.json for ECS deployment..."
       - printf '[{"name":"flask-ecs-app","imageUri":"%s"}]' 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG > imagedefinitions.json
+      - cat imagedefinitions.json
 
 artifacts:
   files:
