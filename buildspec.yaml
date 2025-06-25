@@ -20,7 +20,9 @@ phases:
     commands:
       - echo Post-build started on date
       - echo Pushing Docker image to ECR...
-      - docker tag flask-ecs-app:$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8) 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:latest
+      - docker push 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)
+      - docker tag flask-ecs-app:$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8) flask-ecs-app:latest
+      - docker tag flask-ecs-app:latest 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:latest
       - docker push 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:latest
       - echo Creating imagedefinitions.json for ECS deployment...
       - printf '[{"name":"flask-ecs-app","imageUri":"160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:%s"}]' $(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8) > imagedefinitions.json
