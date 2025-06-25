@@ -8,7 +8,8 @@ phases:
       - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 160596073886.dkr.ecr.ap-south-1.amazonaws.com
       - echo "Setting image tag from Git commit ID..."
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-8)
-      - echo $IMAGE_TAG > image_tag.txt
+      - echo "Image tag is $IMAGE_TAG"
+      - echo $IMAGE_TAG > image_tag.txt  # Save for reuse
 
   build:
     commands:
@@ -22,7 +23,7 @@ phases:
     commands:
       - IMAGE_TAG=$(cat image_tag.txt)
       - echo "Post-build started on $(date)"
-      - echo "Pushing Docker image to ECR..."
+      - echo "Pushing image with tag: $IMAGE_TAG"
       - docker push 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
       - docker tag 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:latest
       - docker push 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:latest
