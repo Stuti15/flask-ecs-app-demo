@@ -9,7 +9,7 @@ phases:
       - echo "Setting image tag from Git commit ID..."
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-8)
       - echo "Image tag is $IMAGE_TAG"
-      - echo $IMAGE_TAG > image_tag.txt  # Save for reuse
+      - echo $IMAGE_TAG > image_tag.txt
 
   build:
     commands:
