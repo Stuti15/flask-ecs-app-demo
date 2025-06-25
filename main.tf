@@ -127,8 +127,8 @@ resource "aws_ecs_task_definition" "app_task" {
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   container_definitions    = jsonencode([
     {
-      name      = "webapp"
-      image     = "<YOUR_ECR_IMAGE_URL>"
+      name      = "flask-ecs-app"
+      image     = "dummy"
       portMappings = [{
         containerPort = 80
         hostPort      = 80
