@@ -22,13 +22,11 @@ phases:
     - IMAGE_TAG=$(cat image_tag.txt)
     - echo "Post-build started on $(date)"
     - echo "Using image tag: $IMAGE_TAG"
-    - echo "Images available locally"
     - docker images
-    - echo "Trying to push image: flask-ecs-app:$IMAGE_TAG"
+    - echo "Pushing image to ECR..."
     - docker push 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
     - docker tag 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:latest
     - docker push 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:latest
-    - echo "Creating image definitions for ECS"
     - printf '[{"name":"flask-ecs-app","imageUri":"160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:%s"}]' $IMAGE_TAG > imagedefinitions.json
     - cat imagedefinitions.json
 
