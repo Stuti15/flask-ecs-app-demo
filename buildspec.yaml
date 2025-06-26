@@ -16,47 +16,21 @@ phases:
       - echo "Building Docker image with tag $IMAGE_TAG..."
       - docker build -t flask-ecs-app:$IMAGE_TAG .
       - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
-      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
+      - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
 
   post_build:
     commands:
       - IMAGE_TAG=$(cat image_tag.txt)
-      - echo "Creating ECS task definition (taskdef.json)..."
-      - |
-        cat > taskdef.json <<EOF
-        {
-          "family": "flask-ecs-app",
-          "executionRoleArn": "arn:aws:iam::160596073886:role/ecsTaskExecutionRole",
-          "networkMode": "awsvpc",
-          "requiresCompatibilities": ["FARGATE"],
-          "cpu": "256",
-          "memory": "512",
-          "containerDefinitions": [
-            {
-              "name": "flask-ecs-app",
-              "image": "160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG",
-              "portMappings": [
-                {
-                  "containerPort": 5000,
-                  "protocol": "tcp"
-                }
-              ],
-              "essential": true
-            }
-          ]
-        }
-        EOF
-      - echo "Creating CodeDeploy appspec.yaml..."
-      - |
-        cat > appspec.yaml <<EOF
-        version: 1
-        Resources:
-          - TargetService:
-              Type: AWS::ECS::Service
-              Properties:
-                TaskDefinition: taskdef.json
-                LoadBalancerInfo:
-                  ContainerName: "flask-ecs-app"
-                  ContainerPort: 5000
-        EOF
-      - echo "Build completed and files generated: taskdef.json and appspec.yaml"
+      - echo "Pushing Docker images to ECR..."
+      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
+      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
+      - echo "Writing taskdef.json with updated image..."
+      - sed "s|<IMAGE_TAG>|$IMAGE_TAG|g" taskdef.json.template > taskdef.json
+      - echo "Writing appspec.yaml"
+      - cp appspec.yaml appspec.yaml  # Already present, or you could template this too
+      - echo "Done writing deployment artifacts."
+
+artifacts:
+  files:
+    - taskdef.json
+    - appspec.yaml
