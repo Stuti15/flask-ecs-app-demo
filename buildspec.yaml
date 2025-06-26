@@ -5,7 +5,7 @@ phases:
     commands:
       - echo "Logging in to Amazon ECR..."
       - aws --version
-      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 160596073886.dkr.ecr.ap-south-1.amazonaws.com
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 160596073886.dkr.ecr.us-east-1.amazonaws.com
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-8)
       - echo "IMAGE_TAG=$IMAGE_TAG"
       - echo $IMAGE_TAG > image_tag.txt
@@ -15,20 +15,20 @@ phases:
       - IMAGE_TAG=$(cat image_tag.txt)
       - echo "Build started on $(date)"
       - docker build -t flask-ecs-app:$IMAGE_TAG .
-      - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
+      - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
 
   post_build:
-  commands:
-    - IMAGE_TAG=$(cat image_tag.txt)
-    - echo "Post-build started on $(date)"
-    - echo "Using image tag: $IMAGE_TAG"
-    - docker images
-    - echo "Pushing image to ECR..."
-    - docker push 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
-    - docker tag 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:latest
-    - docker push 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:latest
-    - printf '[{"name":"flask-ecs-app","imageUri":"160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:%s"}]' $IMAGE_TAG > imagedefinitions.json
-    - cat imagedefinitions.json
+    commands:
+      - IMAGE_TAG=$(cat image_tag.txt)
+      - echo "Post-build started on $(date)"
+      - echo "Using image tag: $IMAGE_TAG"
+      - docker images
+      - echo "Pushing image to ECR..."
+      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
+      - docker tag 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
+      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
+      - printf '[{"name":"flask-ecs-app","imageUri":"160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:%s"}]' $IMAGE_TAG > imagedefinitions.json
+      - cat imagedefinitions.json
 
 artifacts:
   files:
