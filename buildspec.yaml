@@ -21,7 +21,6 @@ phases:
     commands:
       - IMAGE_TAG=$(cat image_tag.txt)
       - echo "Post-build started on $(date)"
-      - echo "Pushing image: $IMAGE_TAG"
       - docker images
       - docker push 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
       - docker tag 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.ap-south-1.amazonaws.com/flask-ecs-app:latest
