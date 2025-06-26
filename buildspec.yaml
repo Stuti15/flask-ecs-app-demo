@@ -3,32 +3,23 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo "Logging in to Amazon ECR..."
+      - echo Logging in to Amazon ECR...
       - aws --version
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 160596073886.dkr.ecr.us-east-1.amazonaws.com
-      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-8)
-      - echo "IMAGE_TAG=$IMAGE_TAG"
-      - echo $IMAGE_TAG > image_tag.txt
-
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)
   build:
     commands:
-      - IMAGE_TAG=$(cat image_tag.txt)
-      - echo "Building Docker image with tag $IMAGE_TAG..."
+      - echo Build started on `date`
+      - echo Building the Docker image...
       - docker build -t flask-ecs-app:$IMAGE_TAG .
       - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
-      - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
-
   post_build:
     commands:
-      - IMAGE_TAG=$(cat image_tag.txt)
-      - echo "Pushing Docker images to ECR..."
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
       - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
-      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
-      - echo "Generating taskdef.json from template..."
-      - sed "s|<IMAGE_TAG>|$IMAGE_TAG|g" taskdef.json.template > taskdef.json
-      - echo "Build complete."
-
+      - echo Writing image definitions file...
+      - printf '[{"name":"flask-ecs-app","imageUri":"%s"}]' 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG > imagedefinitions.json
 artifacts:
   files:
-    - appspec.yaml
-    - taskdef.json
+    - imagedefinitions.json
