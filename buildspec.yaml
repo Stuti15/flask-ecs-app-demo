@@ -24,13 +24,11 @@ phases:
       - echo "Pushing Docker images to ECR..."
       - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
       - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
-      - echo "Writing taskdef.json with updated image..."
+      - echo "Generating taskdef.json from template..."
       - sed "s|<IMAGE_TAG>|$IMAGE_TAG|g" taskdef.json.template > taskdef.json
-      - echo "Writing appspec.yaml"
-      - cp appspec.yaml appspec.yaml  # Already present, or you could template this too
-      - echo "Done writing deployment artifacts."
+      - echo "Build complete."
 
 artifacts:
   files:
-    - taskdef.json
     - appspec.yaml
+    - taskdef.json
