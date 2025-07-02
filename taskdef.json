@@ -1,52 +1,22 @@
 {
-  "family": "flask-ecs-task",
+  "family": "flask-ecs-app",
   "networkMode": "awsvpc",
-  "requiresCompatibilities": ["FARGATE"],
-  "cpu": "256",
-  "memory": "512",
-  "executionRoleArn": "arn:aws:iam::<your-account-id>:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::<your-account-id>:role/ecsTaskRole",
   "containerDefinitions": [
     {
       "name": "flask-ecs-app",
-      "image": "<your-account-id>.dkr.ecr.<region>.amazonaws.com/flask-ecs-app:latest",
+      "image": "160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:<IMAGE_TAG>",
+      "essential": true,
       "portMappings": [
         {
           "containerPort": 80,
+          "hostPort": 80,
           "protocol": "tcp"
         }
-      ],
-      "essential": true,
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "/ecs/flask-ecs-app",
-          "awslogs-region": "<region>",
-          "awslogs-stream-prefix": "ecs"
-        }
-      },
-      "environment": [
-        {
-          "name": "FLASK_ENV",
-          "value": "production"
-        },
-        {
-          "name": "FLASK_APP",
-          "value": "app.py"
-        }
-      ],
-      "healthCheck": {
-        "command": [
-          "CMD-SHELL",
-          "curl -f http://localhost:80/ || exit 1"
-        ],
-        "interval": 30,
-        "timeout": 5,
-        "retries": 3,
-        "startPeriod": 60
-      },
-      "memory": 512,
-      "cpu": 256
+      ]
     }
-  ]
+  ],
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::160596073886:role/ecsTaskExecutionRole"
 }
