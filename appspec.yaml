@@ -5,7 +5,7 @@ Resources:
       Properties:
         TaskDefinition: taskdef.json
         LoadBalancerInfo:
-          ContainerName: "flask-app-demo"
+          ContainerName: "flask-eps-app"
           ContainerPort: 80
 
 Hooks:
