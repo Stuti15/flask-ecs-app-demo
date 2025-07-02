@@ -13,8 +13,8 @@ phases:
   build:
     commands:
       - IMAGE_TAG=$(cat image_tag.txt)
-      - echo "Build started on $(date)"
-      - echo "Building Docker image..."
+      - echo Build started on `date`
+      - echo Building Docker image...
       - docker build -t flask-ecs-app:$IMAGE_TAG .
       - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
       - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
@@ -22,18 +22,16 @@ phases:
   post_build:
     commands:
       - IMAGE_TAG=$(cat image_tag.txt)
-      - echo "Build completed on $(date)"
-      - echo "Pushing Docker images..."
+      - echo Build completed on `date`
+      - echo Pushing Docker images...
       - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
       - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
-      - echo "Replacing <IMAGE_TAG> in taskdef..."
-      - sed "s|<IMAGE_TAG>|$IMAGE_TAG|g" taskdef.json.template > taskdef.json
-      - echo "Generated taskdef.json:"
-      - cat taskdef.json
-      - echo "Generated appspec.yaml:"
+      - echo Replacing <IMAGE_TAG> in task definition...
+      - sed "s|<IMAGE_TAG>|$IMAGE_TAG|g" taskdef.json > taskdef_rendered.json
+      - echo Writing appspec file...
       - cat appspec.yaml
 
 artifacts:
   files:
     - appspec.yaml
-    - taskdef.json
+    - taskdef_rendered.json
