@@ -26,9 +26,9 @@ phases:
       - echo Pushing Docker images...
       - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
       - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
-      - echo Writing image definitions file...
-      - printf '[{"name":"flask-ecs-app","imageUri":"160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:%s"}]' $IMAGE_TAG > imagedefinitions.json
-      - cat imagedefinitions.json
+      - echo Replacing <IMAGE_TAG> in taskdef...
+      - sed "s|<IMAGE_TAG>|$IMAGE_TAG|g" taskdef.json.template > taskdef.json
+      - cat taskdef.json
 
 artifacts:
   files:
