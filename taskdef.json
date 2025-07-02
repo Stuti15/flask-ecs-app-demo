@@ -1,10 +1,10 @@
 {
-  "family": "flask-app-demo",
+  "family": "flask-ecs-app",
   "networkMode": "awsvpc",
   "containerDefinitions": [
     {
-      "name": "flask-app-demo",
-      "image": "160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-app-demo:<IMAGE_TAG>",
+      "name": "flask-ecs-app",
+      "image": "160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:<IMAGE_TAG>",
       "essential": true,
       "portMappings": [
         {
