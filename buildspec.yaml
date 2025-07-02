@@ -15,17 +15,17 @@ phases:
       - IMAGE_TAG=$(cat image_tag.txt)
       - echo Build started on `date`
       - echo Building Docker image...
-      - docker build -t flask-app-demo:$IMAGE_TAG .
-      - docker tag flask-app-demo:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-app-demo:$IMAGE_TAG
-      - docker tag flask-app-demo:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-app-demo:latest
+      - docker build -t flask-ecs-app:$IMAGE_TAG .
+      - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
+      - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
 
   post_build:
     commands:
       - IMAGE_TAG=$(cat image_tag.txt)
       - echo Build completed on `date`
       - echo Pushing Docker images...
-      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-app-demo:$IMAGE_TAG
-      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-app-demo:latest
+      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
+      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
       - echo "Replacing <IMAGE_TAG> in task definition..."
       - sed "s|<IMAGE_TAG>|$IMAGE_TAG|g" taskdef.json > taskdef_rendered.json
       - echo Writing appspec file...
