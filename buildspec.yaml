@@ -13,20 +13,20 @@ phases:
 
   build:
     commands:
-      - echo Build started on `date`
+      - echo Build started on $(date)
       - docker build -t flask-ecs-app:$IMAGE_TAG .
       - docker tag flask-ecs-app:$IMAGE_TAG $REPOSITORY_URI:$IMAGE_TAG
       - docker tag flask-ecs-app:$IMAGE_TAG $REPOSITORY_URI:latest
 
   post_build:
     commands:
-      - echo Build completed on `date`
+      - echo Build completed on $(date)
       - echo "Attempting to push: $REPOSITORY_URI:$IMAGE_TAG"
       - docker images
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:latest
       - echo Writing imagedefinitions.json...
-      - printf '[{"name":"flask-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - printf '[{"name":"flask-ecs-app","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
       - cat imagedefinitions.json
 
 artifacts:
