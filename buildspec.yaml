@@ -5,9 +5,11 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 160596073886.dkr.ecr.us-east-1.amazonaws.com
-      - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)
-      - export REPOSITORY_URI=160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)
       - echo "IMAGE_TAG=$IMAGE_TAG"
+      - export IMAGE_TAG
+      - REPOSITORY_URI=160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app
+      - export REPOSITORY_URI
 
   build:
     commands:
@@ -18,7 +20,9 @@ phases:
 
   post_build:
     commands:
-      - echo Pushing Docker images...
+      - echo Build completed on `date`
+      - echo "Attempting to push: $REPOSITORY_URI:$IMAGE_TAG"
+      - docker images
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:latest
       - echo Writing imagedefinitions.json...
