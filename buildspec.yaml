@@ -22,7 +22,6 @@ phases:
       - echo Build completed on `date`
       - IMAGE_TAG=$(cat imageTag.txt)
       - docker images
-      - echo Pushing Docker image with tag: $IMAGE_TAG
       - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
       - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
       - printf '[{"name":"flask-container","imageUri":"160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:%s"}]' $IMAGE_TAG > imagedefinitions.json
