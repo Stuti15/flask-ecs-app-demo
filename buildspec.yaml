@@ -4,27 +4,26 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - aws --version
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 160596073886.dkr.ecr.us-east-1.amazonaws.com
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)
       - echo $IMAGE_TAG > imageTag.txt
 
   build:
     commands:
-      - echo Build started on `date`
+      - echo Build started on $(date)
       - IMAGE_TAG=$(cat imageTag.txt)
-      - docker build -t  flaskapp-ecs-demo-cluster:$IMAGE_TAG .
-      - docker tag  flaskapp-ecs-demo-cluster:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/ flaskapp-ecs-demo-cluster:$IMAGE_TAG
-      - docker tag  flaskapp-ecs-demo-cluster:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/ flaskapp-ecs-demo-cluster:latest
+      - docker build -t flaskapp-ecs-demo-cluster:$IMAGE_TAG .
+      - docker tag flaskapp-ecs-demo-cluster:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flaskapp-ecs-demo-cluster:$IMAGE_TAG
+      - docker tag flaskapp-ecs-demo-cluster:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flaskapp-ecs-demo-cluster:latest
 
   post_build:
     commands:
-      - echo Build completed on `date`
+      - echo Build completed on $(date)
       - IMAGE_TAG=$(cat imageTag.txt)
       - docker images
-      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/ flaskapp-ecs-demo-cluster:$IMAGE_TAG
-      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/ flaskapp-ecs-demo-cluster:latest
-      - printf '[{"name":"flask-container","imageUri":"160596073886.dkr.ecr.us-east-1.amazonaws.com/ flaskapp-ecs-demo-cluster:%s"}]' $IMAGE_TAG > imagedefinitions.json
+      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flaskapp-ecs-demo-cluster:$IMAGE_TAG
+      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flaskapp-ecs-demo-cluster:latest
+      - printf '[{"name":"flask-container","imageUri":"160596073886.dkr.ecr.us-east-1.amazonaws.com/flaskapp-ecs-demo-cluster:%s"}]' $IMAGE_TAG > imagedefinitions.json
       - cat imagedefinitions.json
 
 artifacts:
