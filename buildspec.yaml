@@ -13,18 +13,18 @@ phases:
     commands:
       - echo Build started on `date`
       - IMAGE_TAG=$(cat imageTag.txt)
-      - docker build -t flask-ecs-app:$IMAGE_TAG .
-      - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
-      - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
+      - docker build -t  flaskapp-ecs-demo-cluster:$IMAGE_TAG .
+      - docker tag  flaskapp-ecs-demo-cluster:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/ flaskapp-ecs-demo-cluster:$IMAGE_TAG
+      - docker tag  flaskapp-ecs-demo-cluster:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/ flaskapp-ecs-demo-cluster:latest
 
   post_build:
     commands:
       - echo Build completed on `date`
       - IMAGE_TAG=$(cat imageTag.txt)
       - docker images
-      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
-      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
-      - printf '[{"name":"flask-container","imageUri":"160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:%s"}]' $IMAGE_TAG > imagedefinitions.json
+      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/ flaskapp-ecs-demo-cluster:$IMAGE_TAG
+      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/ flaskapp-ecs-demo-cluster:latest
+      - printf '[{"name":"flask-container","imageUri":"160596073886.dkr.ecr.us-east-1.amazonaws.com/ flaskapp-ecs-demo-cluster:%s"}]' $IMAGE_TAG > imagedefinitions.json
       - cat imagedefinitions.json
 
 artifacts:
