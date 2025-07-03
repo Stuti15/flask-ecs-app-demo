@@ -13,18 +13,22 @@ phases:
     commands:
       - echo Build started on `date`
       - IMAGE_TAG=$(cat imageTag.txt)
-      - echo Building the Docker image...
+      - echo Building the Docker image with tag: $IMAGE_TAG
       - docker build -t flask-ecs-app:$IMAGE_TAG .
       - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
+      - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
 
   post_build:
     commands:
       - echo Build completed on `date`
       - IMAGE_TAG=$(cat imageTag.txt)
-      - echo Pushing the Docker image...
+      - echo Docker images on this host:
+      - docker images
+      - echo Pushing Docker image with tag: $IMAGE_TAG
       - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
+      - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
       - echo Writing image definitions file...
-      - printf '[{"name":"flask-ecs-app","imageUri":"160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:%s"}]' $IMAGE_TAG > imagedefinitions.json
+      - printf '[{"name":"flask-container","imageUri":"160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:%s"}]' $IMAGE_TAG > imagedefinitions.json
       - cat imagedefinitions.json
 
 artifacts:
