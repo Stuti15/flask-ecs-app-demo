@@ -21,7 +21,6 @@ phases:
   post_build:
     commands:
       - echo Build completed on $(date)
-      - echo "Attempting to push: $REPOSITORY_URI:$IMAGE_TAG"
       - docker images
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:latest
