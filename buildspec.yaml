@@ -19,16 +19,18 @@ phases:
       - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
       - docker tag flask-ecs-app:$IMAGE_TAG 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
 
-  post_build:
+    post_build:
     commands:
       - echo Build completed on $(date)
       - IMAGE_TAG=$(cat imageTag.txt)
+      - echo Pushing Docker image with tag $IMAGE_TAG
       - docker images
       - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:$IMAGE_TAG
       - docker push 160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:latest
-      - echo Writing image definitions file...
+      - echo Writing imagedefinitions.json file...
       - printf '[{"name":"flask-container","imageUri":"160596073886.dkr.ecr.us-east-1.amazonaws.com/flask-ecs-app:%s"}]' $IMAGE_TAG > imagedefinitions.json
       - cat imagedefinitions.json
+
 
 artifacts:
   files:
